@@ -25,6 +25,16 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; back
 #unity-progress-bar-empty { width:60% !important; margin:16px auto 0 !important; background:url('TemplateData/progress-bar-empty-light.png') no-repeat center / 100% 100% !important; }
 #unity-progress-bar-full { background:url('TemplateData/progress-bar-full-light.png') no-repeat center / 100% 100% !important; }
 </style>
+<script id='hex-landscape-head'>
+window.addEventListener('error', function (e) { if (e && e.message === 'Script error.') { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+</script>
+<style id='hex-landscape'>
+#hex-rotate { display:none; position:fixed; left:0; top:0; width:100%; height:100%; z-index:99999; background:#1a1f29; color:#fff; font-family:sans-serif; text-align:center; align-items:center; justify-content:center; flex-direction:column; }
+#hex-rotate .ph { width:64px; height:104px; border:6px solid #fff; border-radius:14px; margin:0 auto 28px; animation:hexturn 2.4s ease-in-out infinite; }
+@keyframes hexturn { 0%,25% { transform:rotate(0deg); } 60%,100% { transform:rotate(-90deg); } }
+#hex-rotate .tx { font-size:22px; font-weight:bold; }
+@media (orientation: portrait) and (max-width: 900px) { #hex-rotate { display:flex; } }
+</style>
 </head>
   <body>
     <div id="unity-container" class="unity-desktop">
@@ -165,5 +175,21 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; back
       document.body.appendChild(script);
 
     </script>
-  </body>
+  <div id='hex-rotate'><div class='ph'></div><div class='tx'>スマホを横にしてください</div></div>
+<script>
+(function () {
+  function fix() { window.scrollTo(0, 0); window.dispatchEvent(new Event('resize')); }
+  function later() { [100, 400, 900, 1600].forEach(function (t) { setTimeout(fix, t); }); }
+  window.addEventListener('orientationchange', later);
+  window.addEventListener('resize', function () { setTimeout(function () { window.scrollTo(0, 0); }, 50); });
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', later);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) later(); });
+  var tried = false;
+  window.addEventListener('touchend', function () {
+    if (tried) return; tried = true;
+    try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function () {}); } catch (e) {}
+  }, { once: true });
+})();
+</script>
+</body>
 </html>
